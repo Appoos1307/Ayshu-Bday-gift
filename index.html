@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#fff4f8"><title>For Ayshu 💗</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#fff4f8,#fffaf2);color:#422b3b;font:16px/1.65 system-ui,-apple-system,Segoe UI,sans-serif}header{text-align:center;padding:56px 20px 32px;background:radial-gradient(ellipse at top,#ffd9e8,transparent 70%)}.heart{font-size:2rem;color:#d84f8d;animation:pulse 1.8s infinite}h1{font-family:Georgia,serif;font-size:clamp(2.4rem,9vw,4.5rem);line-height:1.1;color:#a62e69;margin:12px 0}h2{font-family:Georgia,serif;color:#a62e69}p{white-space:pre-wrap}.sub{font-size:1.1rem;color:#80566b}.card{max-width:820px;margin:20px auto;padding:24px;width:calc(100% - 28px);background:#ffffffd9;border:1px solid #f3d5e3;border-radius:22px;box-shadow:0 12px 35px #74314a0d}.letter{font-family:Georgia,serif;font-size:1.1rem;line-height:1.9}.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}.gallery img{width:100%;height:190px;object-fit:cover;border-radius:14px}.btn{display:inline-block;border:0;border-radius:999px;padding:11px 17px;background:#a62e69;color:white;text-decoration:none;font-weight:700;cursor:pointer}.muted{color:#876d7d;font-size:.9rem}footer{text-align:center;padding:28px;color:#9a7187}input,textarea{width:100%;padding:12px;border:1px solid #e2bfd0;border-radius:10px;font:inherit;margin:5px 0 12px}textarea{min-height:130px}label{font-weight:700}.row{display:flex;gap:8px;flex-wrap:wrap}audio{width:100%;margin-top:10px}@keyframes pulse{50%{transform:scale(1.16)}}.hidden{display:none!important}
+</style></head><body><header><div class="heart">♥</div><div class="sub">A little something made just for you</div><h1 id="greeting">Happy Birthday, Ayshu!</h1><p class="sub" id="subtitle">You make the world a little more beautiful.</p></header>
+<main id="public">
+<section class="card"><h2>For my favourite person ✨</h2><p class="letter" id="letter">Dear Ayshu,\\n\\nOn your birthday, I hope life gives you all the love, peace, and happiness you deserve. You make ordinary moments feel special, and I’m grateful for the light you bring into the world.\\n\\nMay this new year of your life be full of beautiful surprises, warm smiles, and dreams coming true. Keep being your wonderful self.\\n\\nHappy Birthday, Ayshu. 💗</p><p class="muted">Made with love, just for you.</p></section>
+<section class="card"><h2>Little memories 📸</h2><div id="gallery" class="gallery"><p class="muted">Memories added here will appear in this gallery.</p></div></section>
+<section class="card" id="musicCard"><h2>A song for you 🎵</h2><div id="music"></div><p class="muted">If a song has been added, you can play it here.</p></section>
+</main>
+<main id="admin" class="hidden"><section class="card"><h2>Admin dashboard 🔐</h2><p id="authStatus">Sign in with your admin email and password.</p><form id="login"><label>Email</label><input id="email" type="email" required autocomplete="username"><label>Password</label><input id="password" type="password" required autocomplete="current-password"><button class="btn" type="submit">Sign in</button></form>
+<div id="editor" class="hidden"><form id="edit"><label>Birthday greeting</label><input id="editGreeting"><label>Subtitle</label><input id="editSubtitle"><label>Birthday letter</label><textarea id="editLetter"></textarea><label>Music URL (optional)</label><input id="editMusic" placeholder="https://..."><button class="btn" type="submit">Save changes</button></form>
+<hr><h2>Upload photos</h2><input id="photos" type="file" accept="image/*" multiple><button class="btn" id="upload" type="button">Upload selected photos</button><p id="adminMessage" class="muted"></p><button class="btn" id="logout" type="button">Sign out</button></div>
+</section></main><footer>Made with lots of love 💗</footer>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const supabase=createClient('https://evsybfuzzktsxlwohdhm.supabase.co','sb_publishable_zh5S5kkRnu-_yT2Ne0P4MQ_hay51TTW');
+const isAdmin=location.pathname.replace(/\\/$/,'').endsWith('/admin')||location.hash==='#admin';
+if(isAdmin){document.querySelector('#public').classList.add('hidden');document.querySelector('#admin').classList.remove('hidden')}
+const msg=(s)=>document.querySelector('#adminMessage').textContent=s;
+let row=null, cols={};
+function pick(obj,names,fallback=''){for(const n of names){if(obj&&obj[n]!=null)return obj[n]}return fallback}
+async function loadContent(){
+ const {data,error}=await supabase.from('site_content').select('*').limit(1).maybeSingle();
+ if(error){console.warn(error);return}
+ row=data||{};
+ cols.greeting=['greeting','title','headline','heading'].find(k=>k in row)||'greeting';
+ cols.subtitle=['subtitle','tagline','description'].find(k=>k in row)||'subtitle';
+ cols.letter=['letter','birthday_letter','message','content'].find(k=>k in row)||'letter';
+ cols.music=['music_url','music','song_url'].find(k=>k in row)||'music_url';
+ document.querySelector('#greeting').textContent=pick(row,[cols.greeting],'Happy Birthday, Ayshu!');
+ document.querySelector('#subtitle').textContent=pick(row,[cols.subtitle],'You make the world a little more beautiful.');
+ document.querySelector('#letter').textContent=pick(row,[cols.letter],'Dear Ayshu,\\n\\nWishing you the happiest birthday, full of love and beautiful memories. 💗');
+ const music=pick(row,[cols.music],'');document.querySelector('#music').innerHTML='';
+ if(music){let a=document.createElement('audio');a.controls=true;a.src=music;document.querySelector('#music').append(a)}
+ document.querySelector('#editGreeting').value=pick(row,[cols.greeting],'Happy Birthday, Ayshu!');
+ document.querySelector('#editSubtitle').value=pick(row,[cols.subtitle],'You make the world a little more beautiful.');
+ document.querySelector('#editLetter').value=pick(row,[cols.letter],'');
+ document.querySelector('#editMusic').value=pick(row,[cols.music],'');
+}
+async function loadPhotos(){
+ const {data,error}=await supabase.storage.from('birthday-photos').list('',{limit:100});
+ const g=document.querySelector('#gallery');g.innerHTML='';
+ if(error||!data||!data.length){g.innerHTML='<p class="muted">Your photo memories will appear here.</p>';return}
+ for(const f of data.filter(x=>x.name&&!x.name.startsWith('.'))){const {data:u}=supabase.storage.from('birthday-photos').getPublicUrl(f.name);const im=document.createElement('img');im.src=u.publicUrl;im.alt='Birthday memory';g.append(im)}
+}
+await loadContent();await loadPhotos();
+document.querySelector('#login').addEventListener('submit',async e=>{e.preventDefault();const {error}=await supabase.auth.signInWithPassword({email:document.querySelector('#email').value,password:document.querySelector('#password').value});document.querySelector('#authStatus').textContent=error?error.message:'Signed in';if(!error){document.querySelector('#login').classList.add('hidden');document.querySelector('#editor').classList.remove('hidden');await loadContent()}});
+document.querySelector('#edit').addEventListener('submit',async e=>{e.preventDefault();const {data:sessionData}=await supabase.auth.getSession();if(!sessionData.session){msg('Please sign in first.');return}
+ const patch={};patch[cols.greeting]=document.querySelector('#editGreeting').value;patch[cols.subtitle]=document.querySelector('#editSubtitle').value;patch[cols.letter]=document.querySelector('#editLetter').value;patch[cols.music]=document.querySelector('#editMusic').value;
+ let result;
+ if(row&&row.id!=null) result=await supabase.from('site_content').update(patch).eq('id',row.id);
+ else {msg('Could not find the existing content row. Check that the Supabase SQL setup ran successfully.');return}
+ if(result.error)msg('Save failed: '+result.error.message);else{msg('Saved! Refresh the public page to see your changes.');await loadContent()}
+});
+document.querySelector('#upload').addEventListener('click',async()=>{const files=document.querySelector('#photos').files;if(!files.length){msg('Choose one or more photos first.');return}
+ const {data:sd}=await supabase.auth.getSession();if(!sd.session){msg('Please sign in first.');return}
+ for(const f of files){const safe=f.name.replace(/[^a-zA-Z0-9._-]/g,'_');const path=Date.now()+'-'+safe;const {error}=await supabase.storage.from('birthday-photos').upload(path,f,{upsert:false,contentType:f.type});if(error){msg('Upload failed: '+error.message);return}}
+ msg('Photos uploaded!');await loadPhotos()
+});
+document.querySelector('#logout').addEventListener('click',async()=>{await supabase.auth.signOut();document.querySelector('#editor').classList.add('hidden');document.querySelector('#login').classList.remove('hidden');document.querySelector('#authStatus').textContent='Signed out.'});
+<\/script></body></html>
