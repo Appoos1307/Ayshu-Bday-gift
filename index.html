@@ -15,7 +15,7 @@
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const supabase=createClient('https://evsybfuzzktsxlwohdhm.supabase.co','sb_publishable_zh5S5kkRnu-_yT2Ne0P4MQ_hay51TTW');
-const isAdmin=location.pathname.replace(/\\/$/,'').endsWith('/admin')||location.hash==='#admin';
+const isAdmin=location.pathname.replace(/\/$/,'').endsWith('/admin')||location.hash==='#admin';
 if(isAdmin){document.querySelector('#public').classList.add('hidden');document.querySelector('#admin').classList.remove('hidden')}
 const msg=(s)=>document.querySelector('#adminMessage').textContent=s;
 let row=null, cols={};
