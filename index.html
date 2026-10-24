@@ -31,34 +31,33 @@ async function loadContent(){
  document.querySelector('#greeting').textContent=pick(row,[cols.greeting],'Happy Birthday, Ayshu!');
  document.querySelector('#subtitle').textContent=pick(row,[cols.subtitle],'You make the world a little more beautiful.');
  document.querySelector('#letter').textContent=pick(row,[cols.letter],'Dear Ayshu,\\n\\nWishing you the happiest birthday, full of love and beautiful memories. 💗');
- const music=pick(row,[cols.music],'');document.querySelector('#music').innerHTML='';
- if(music){
-  const music = pick(row, [cols.music], '');
+ const music = pick(row, [cols.music], '');
 const container = document.querySelector('#music');
 container.innerHTML = '';
 
 if (music) {
-  const videoMatch = music.match(
-    /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/
-  );
+const videoMatch = music.match(
+/(?:youtu.be/|youtube.com/(?:watch?v=|embed/|shorts/))([a-zA-Z0-9_-]{11})/
+);
 
-  if (videoMatch) {
-    const frame = document.createElement('iframe');
-    frame.src = 'https://www.youtube.com/embed/' + videoMatch[1];
-    frame.title = 'Birthday song for Ayshu';
-    frame.width = '100%';
-    frame.height = '220';
-    frame.style.border = '0';
-    frame.allow = 'encrypted-media; picture-in-picture';
-    frame.allowFullscreen = true;
-    container.appendChild(frame);
-  } else {
-    const audio = document.createElement('audio');
-    audio.controls = true;
-    audio.src = music;
-    container.appendChild(audio);
-  }
-     }
+if (videoMatch) {
+const frame = document.createElement('iframe');
+frame.src = 'https://www.youtube.com/embed/' + videoMatch[1];
+frame.title = 'Birthday song for Ayshu';
+frame.width = '100%';
+frame.height = '220';
+frame.style.border = '0';
+frame.allow = 'encrypted-media; picture-in-picture';
+frame.allowFullscreen = true;
+container.appendChild(frame);
+} else {
+const audio = document.createElement('audio');
+audio.controls = true;
+audio.src = music;
+container.appendChild(audio);
+}
+}
+ }
 async function loadPhotos(){
  const {data,error}=await supabase.storage.from('birthday-photos').list('',{limit:100});
  const g=document.querySelector('#gallery');g.innerHTML='';
