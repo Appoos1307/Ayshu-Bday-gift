@@ -33,17 +33,23 @@ async function loadContent(){
  document.querySelector('#letter').textContent=pick(row,[cols.letter],'Dear Ayshu,\\n\\nWishing you the happiest birthday, full of love and beautiful memories. 💗');
  const music=pick(row,[cols.music],'');document.querySelector('#music').innerHTML='';
  if(music){
-  const videoId = music.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([a-zA-Z0-9_-]+)/)?.[1];
-  const container = document.querySelector('#music');
-  container.innerHTML = '';
-  if(videoId){
+  const music = pick(row, [cols.music], '');
+const container = document.querySelector('#music');
+container.innerHTML = '';
+
+if (music) {
+  const videoMatch = music.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/
+  );
+
+  if (videoMatch) {
     const frame = document.createElement('iframe');
-    frame.src = 'https://www.youtube.com/embed/' + videoId;
+    frame.src = 'https://www.youtube.com/embed/' + videoMatch[1];
     frame.title = 'Birthday song for Ayshu';
     frame.width = '100%';
     frame.height = '220';
     frame.style.border = '0';
-    frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    frame.allow = 'encrypted-media; picture-in-picture';
     frame.allowFullscreen = true;
     container.appendChild(frame);
   } else {
@@ -52,7 +58,7 @@ async function loadContent(){
     audio.src = music;
     container.appendChild(audio);
   }
-}
+     }
 async function loadPhotos(){
  const {data,error}=await supabase.storage.from('birthday-photos').list('',{limit:100});
  const g=document.querySelector('#gallery');g.innerHTML='';
