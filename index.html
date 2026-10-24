@@ -32,11 +32,26 @@ async function loadContent(){
  document.querySelector('#subtitle').textContent=pick(row,[cols.subtitle],'You make the world a little more beautiful.');
  document.querySelector('#letter').textContent=pick(row,[cols.letter],'Dear Ayshu,\\n\\nWishing you the happiest birthday, full of love and beautiful memories. 💗');
  const music=pick(row,[cols.music],'');document.querySelector('#music').innerHTML='';
- if(music){let a=document.createElement('audio');a.controls=true;a.src=music;document.querySelector('#music').append(a)}
- document.querySelector('#editGreeting').value=pick(row,[cols.greeting],'Happy Birthday, Ayshu!');
- document.querySelector('#editSubtitle').value=pick(row,[cols.subtitle],'You make the world a little more beautiful.');
- document.querySelector('#editLetter').value=pick(row,[cols.letter],'');
- document.querySelector('#editMusic').value=pick(row,[cols.music],'');
+ if(music){
+  const videoId = music.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([a-zA-Z0-9_-]+)/)?.[1];
+  const container = document.querySelector('#music');
+  container.innerHTML = '';
+  if(videoId){
+    const frame = document.createElement('iframe');
+    frame.src = 'https://www.youtube.com/embed/' + videoId;
+    frame.title = 'Birthday song for Ayshu';
+    frame.width = '100%';
+    frame.height = '220';
+    frame.style.border = '0';
+    frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    frame.allowFullscreen = true;
+    container.appendChild(frame);
+  } else {
+    const audio = document.createElement('audio');
+    audio.controls = true;
+    audio.src = music;
+    container.appendChild(audio);
+  }
 }
 async function loadPhotos(){
  const {data,error}=await supabase.storage.from('birthday-photos').list('',{limit:100});
