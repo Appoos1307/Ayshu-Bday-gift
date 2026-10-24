@@ -59,4 +59,4 @@ document.querySelector('#upload').addEventListener('click',async()=>{const files
  msg('Photos uploaded!');await loadPhotos()
 });
 document.querySelector('#logout').addEventListener('click',async()=>{await supabase.auth.signOut();document.querySelector('#editor').classList.add('hidden');document.querySelector('#login').classList.remove('hidden');document.querySelector('#authStatus').textContent='Signed out.'});
-<\/script></body></html>
+</script></body></html>
